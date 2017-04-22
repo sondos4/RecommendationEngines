@@ -19,12 +19,11 @@ Below, I will give a small description about each method
 ## Dataset Structure
 Below is a small 
 
-	            |	Sports	|	Books	|	Leadership	|	Philosophy
-questions	    |		    |		    |		        |	
--------------	|	-------	|	-------	|	----------	|	-------------
-question1	    |	1	    |	0	    |	1	        |	0
-question1	    |	0	    |	1	    |	1	        |	1
-question3	    |	0	    |	0	    |	0	        |   1
+questions	    |	Sports	        |	Books	        |	Leadership		|	Philosophy
+-------------	|	-------------	|	-------------	|	-------------	|	-------------
+question1	    |	1	            |	0	            |	1				|	0
+question1	    |	0	            |	1				|	1				|	1
+question3	    |	0	            |	0				|	0				|	1
 
 questions     | Sports
 ------------- | -------------
@@ -37,7 +36,7 @@ question2	0	1	1	1
 question3	0	0	0	1
 
 ### Content-based filtering 
-####Simple Unary method
+#### Simple Unary method
 
 In this part, we will calculate the user profile based on his previous likes and dislikes, and then get the top 5 questions to be predicted for each user. 
 
