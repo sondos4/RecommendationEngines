@@ -5,14 +5,15 @@ The purpose of this project was to implement content-based and hybrid recommenda
 ## Getting Started
 
 The notebook is divided into 3 parts: 
-1- Content-based filtering engine containing: 
-	- Simple Unary method
-	- Unit Weight method
-	- IDF method
 
-2- Hybrid switching method
-3- Hybrid method
-	- In this method, I used a trust-based recommendation method
+1. Content-based filtering engine containing: 
+	i. Simple Unary method
+	ii. Unit Weight method
+	iii. IDF method
+
+2. Hybrid switching method
+3. Hybrid method
+	* In this method, I used a trust-based recommendation method
 
 
 ```
