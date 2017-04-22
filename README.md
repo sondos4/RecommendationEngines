@@ -7,25 +7,52 @@ The purpose of this project was to implement content-based and hybrid recommenda
 The notebook is divided into 3 parts: 
 
 1. Content-based filtering engine containing: 
-	i. Simple Unary method
-	ii. Unit Weight method
-	iii. IDF method
-
+	1. Simple Unary method
+	2. Unit Weight method
+	3. IDF method
 2. Hybrid switching method
-3. Hybrid method
-	* In this method, I used a trust-based recommendation method
+3. Hybrid method:
+In this method, I used a trust-based recommendation method
 
+Below, I will give a small description about each method
+
+## Dataset Structure
+Below is a small 
+
+	            |	Sports	|	Books	|	Leadership	|	Philosophy
+questions	    |		    |		    |		        |	
+-------------	|	-------	|	-------	|	----------	|	-------------
+question1	    |	1	    |	0	    |	1	        |	0
+question1	    |	0	    |	1	    |	1	        |	1
+question3	    |	0	    |	0	    |	0	        |   1
+
+questions     | Sports
+------------- | -------------
+question1     | Content Cell
+question1     | Content Cell
+
+	Sports	Books	Leadership	Philosophy
+question1	1	0	1	0
+question2	0	1	1	1
+question3	0	0	0	1
+
+### Content-based filtering 
+####Simple Unary method
+
+In this part, we will calculate the user profile based on his previous likes and dislikes, and then get the top 5 questions to be predicted for each user. 
+
+To get the user profile for each topic, we have to calculate the dot product of their feedback (their likes and dislikes on specific questions) and their questions (in what topics are their questions related to)
 
 ```
-Give examples
+def sumproductDF(df1, df2):
+    sumprDF = df2.apply(lambda x: x.dot(df1), axis = 0)
+    return sumprDF
+
+sumproductDF(feedback, questions)
 ```
 
+Then, to get the predictions, we will apply the cosine similarity function between two vectors:
 
-```
-Give the example
-```
-
-And repeat
 
 ```
 until finished
