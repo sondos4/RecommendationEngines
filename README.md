@@ -35,6 +35,7 @@ question1		|	1				|	-1				|					|
 question1		|	-1				|	1				|					|	
 question3		|					|					|					|	
 
+## Method Implementation
 ### Content-based filtering 
 #### Simple Unary method
 
@@ -94,57 +95,57 @@ question2		|	-0.436			|	0.833			|	0
 question3		|	0.252			|	0				|	-0.378
 
 
-## Running the tests
+#### Unit Weight Method
 
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
+Here, the only difference with regards to the method above is how we calculate the user profiles.
+Instead of calculating the dot product on the questions dataframe, we will create a new dataframe called ratios, that will store the topic frequency for question. 
 
 ```
-Give an example
+#Sum the number of topics in the questions dataframe per question, then divide the questions dataframe by the result to get the frequency for each topic
+totalsUW = questions.sum(axis=1)
+ratios = questions.div(totalsUW, axis = 0)
+
+userProfileUW = sumproductDF(feedback, ratios)
 ```
 
-### And coding style tests
 
-Explain what these tests test and why
+#### IDF Method
+Here, we will use tf–idf (term frequency–inverse document frequency) which lets us get the relevance of a topic. In that sense, the more the number of questions for a topic, the less it will be relevant. Topics with a low number of questions will therefore be more relevant in the final predicition.
+
+We calculate DF (document frequency) by summing the number of questions per topic 
+Then, we calculate IDF using the below formula:
+![picture alt](https://wikimedia.org/api/rest_v1/media/math/render/svg/ac67bc0f76b5b8e31e842d6b7d28f8949dab7937)
+
+We will divide the total number of questions (in our case it's 20) by the DF (document frequency) for each topic and then take the log.
 
 ```
-Give an example
-```
+#IDF Formula
+IDF = np.log10(20/questions.sum(axis=0))
+````
 
-## Deployment
+###Comments
+The methods we have implemented above are useful if we are already aware of the user (it only works for users who have rated and asked questions). 
+In order to have some recommendations for new users, we need to use other non-personalized methods, like the one I have implemented below. 
 
-Add additional notes about how to deploy this on a live system
+### Hybrid Switching
+This method consists of 'switching' recommendation depending on the user profile. In case of an active user, we will use the IDF method we defined above. In case of a new user, we will switch to a non-personalized recommendation method.
 
-## Built With
+We want to get the top 5 questions for each user baed on the hybrid switching method: 
+1- We need to make sure in the case of an active user not to recommend him questions he has already rated.
+2- For new users, we will recommend them the questions that had the greatest number of likes among the active users.
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+The full code is available in the notebook
 
-## Contributing
+### Hybrid Switching
+In this part, I decided to use a trust-based recommender system to retrieve the top 5 questions for each user. This method works by calculating the trust between 2 users and the trust of a user based on his previous predictions in comparison with other users' predictions.
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+__Note__: In our example of questions and answers dataframe, we are getting the trust based on implicit trust generation methods because we do not have any data about users explicitly rating others. 
 
-## Versioning
+### Reference & Inspiration
+The following documents helped me a lot to understand the methods for a trust-based recommendation system:
+* [Trust In Recommender Sytems](https://csiweb.ucd.ie/files/Trust%20in%20Recommender%20Systems.pdf)
+* [Implicit Trust Recommendation Methods](https://pdfs.semanticscholar.org/8dce/d6f630d27be6b1f759a74d2caf2a09a61842.pdf)
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
 
-## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone who's code was used
-* Inspiration
-* etc
 
