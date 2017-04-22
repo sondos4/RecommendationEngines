@@ -114,7 +114,9 @@ Here, we will use tf–idf (term frequency–inverse document frequency) which l
 
 We calculate DF (document frequency) by summing the number of questions per topic 
 Then, we calculate IDF using the below formula:
+
 ![picture alt](https://wikimedia.org/api/rest_v1/media/math/render/svg/ac67bc0f76b5b8e31e842d6b7d28f8949dab7937)
+
 
 We will divide the total number of questions (in our case it's 20) by the DF (document frequency) for each topic and then take the log.
 
@@ -123,7 +125,8 @@ We will divide the total number of questions (in our case it's 20) by the DF (do
 IDF = np.log10(20/questions.sum(axis=0))
 ````
 
-###Comments
+
+### Comments
 The methods we have implemented above are useful if we are already aware of the user (it only works for users who have rated and asked questions). 
 In order to have some recommendations for new users, we need to use other non-personalized methods, like the one I have implemented below. 
 
@@ -134,12 +137,17 @@ We want to get the top 5 questions for each user baed on the hybrid switching me
 1- We need to make sure in the case of an active user not to recommend him questions he has already rated.
 2- For new users, we will recommend them the questions that had the greatest number of likes among the active users.
 
-The full code is available in the notebook
+The full code is available in the notebook.
 
-### Hybrid Switching
-In this part, I decided to use a trust-based recommender system to retrieve the top 5 questions for each user. This method works by calculating the trust between 2 users and the trust of a user based on his previous predictions in comparison with other users' predictions.
+
+### Hybrid Method (using Trust-based recommendation)
+In this part, I decided to use a trust-based recommender system coupled with the IDF method, to retrieve the top 5 questions for each user(Top 3 questions will be based on trust-recommendation and the top2 will be based on IDF). 
+
+The trust-based recommendation works by calculating the trust between 2 users and the trust of a user based on his previous predictions in comparison with other users' predictions.
 
 __Note__: In our example of questions and answers dataframe, we are getting the trust based on implicit trust generation methods because we do not have any data about users explicitly rating others. 
+
+The full code is available in the notebook.
 
 ### Reference & Inspiration
 The following documents helped me a lot to understand the methods for a trust-based recommendation system:
