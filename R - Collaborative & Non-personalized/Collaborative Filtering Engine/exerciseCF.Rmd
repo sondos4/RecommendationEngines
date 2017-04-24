@@ -1,3 +1,8 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 Building a Collaborative Filtering Engine
 
 Author: Sondos Atwi
@@ -17,7 +22,7 @@ library(gridExtra)
 
 Load the critics dataset
 ```{r}
-critics = read.csv("../../Data/critics.csv", check.names=FALSE)
+critics = read.csv("../Data/critics.csv", check.names=FALSE)
 #Transform to long format to use dplyr
 mcritics = melt(critics, id=c("User"), variable_name= "Movie")
 ```

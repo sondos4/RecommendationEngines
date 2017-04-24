@@ -1,3 +1,8 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 Building a Non Personalized Recommendation Engine
 
 Author: Sondos Atwi 
@@ -17,7 +22,7 @@ library(reshape)
 Load the critics dataset.
 
 ```{r}
-critics = read.csv("../../Data/critics.csv", check.names=FALSE)
+critics = read.csv("../Data/critics.csv", check.names=FALSE)
 #Transform data to long format to use dplyr
 mcritics = melt(critics, id=c("User"), variable_name= "movie", na.rm = TRUE)
 ```
@@ -195,8 +200,8 @@ Explore a real data set and provide non-personalized ratings. You can use the mo
 
 
 ```{r}
-movies = read.csv("../../Data/ml-latest-small/movies.csv")
-ratings = read.csv("../../Data/ml-latest-small/ratings.csv")
+movies = read.csv("../Data/ml-latest-small/movies.csv")
+ratings = read.csv("../Data/ml-latest-small/ratings.csv")
 
 #Select only movieId and title columns
 movies = movies %>%
