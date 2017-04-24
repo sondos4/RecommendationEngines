@@ -38,10 +38,8 @@ In this part, I followed the Non-Personalized filtering approach to:
 
 ![picture alt](weightedSum.png)
 
-taken from the Weighted Sum of Others’ Ratings section in the below article: 
-[A Survey of Collaborative Filtering Techniques](https://www.hindawi.com/journals/aai/2009/421425/)
-
-You can check the above document for a practical example about how this method works. 
+taken from the Weighted Sum of Others’ Ratings section in the following article: 
+[A Survey of Collaborative Filtering Techniques](https://www.hindawi.com/journals/aai/2009/421425/), where you can also check a practical example about how this method works. 
 
 4. Get the top 5 critics that are most similar to one of the users.
 
