@@ -1,6 +1,3 @@
-# IE - Master in Business Analytics and Big Data
-Recommendation Systems
-
 Building a Non Personalized Recommendation Engine
 
 Author: Sondos Atwi 
@@ -28,13 +25,6 @@ mcritics = melt(critics, id=c("User"), variable_name= "movie", na.rm = TRUE)
 
 # 1) Top 5 movies, by rating mean
 Calculate mean rating for each movie, ordered with the highest rating listed first, and plot the top 5.
-
-**Expected result**:
-3.600000, 'The Shawshank Redemption'  
-3.266667, 'Star Wars IV - A New Hope'  
-3.222222, 'Blade Runner'  
-3.166667, 'Groundhog Day'  
-3.062500, 'The Silence of the Lambs'  
 
 Function to get the top movies in a dataframe:  
 __df__: dataframe to be provided (should be the original movies df)  
@@ -80,13 +70,6 @@ ggplot(data=top5, aes(movie, meanRating, fill = movie)) +
 # 2) Top 5 movies, by rating distribution
 Calculate the percentage of ratings for each movie that are 4 stars or higher. Order with the highest percentage first, and plot the top 5 movies with more high ratings distribution.
 
-**Expected result**:
-0.7000000, 'The Shawshank Redemption'  
-0.5333333, 'Star Wars IV - A New Hope'  
-0.5000000, 'Gladiator'  
-0.4444444, 'Blade Runner'  
-0.4375000, 'The Silence of the Lambs'  
-
 Function to get the rating distribution by dividing the number of records having rating (value) >= 4  by the total number of ratings for each movie.  
 __df__: dataframe to be provided (should be the original movies df)  
 __n__: top n records  
@@ -117,13 +100,6 @@ ggplot(data=ratings, aes(movie, ratingDist, fill = movie)) +
 # 3) Top 5 movies, by quantity of ratings
 Count the number of ratings for each movie, order the one with most number of ratings first, submit the top 5.
 
-**Expected result**:
-17, 'Toy Story'  
-16, 'The Silence of the Lambs'  
-15, 'Star Wars IV - A New Hope'  
-14, 'Star Wars VI - Return of the Jedi'  
-13, 'Independence Day'
-
 Function to count the number of ratings for each movie.  
 __df__: dataframe to be provided (should be the original movies df)   
 __n__: top n records  
@@ -146,14 +122,7 @@ customPrint(ratingsdf, col1 = "total")
 ```
 
 # 4) People who watched Star Wars IV also watched ...
-Calculate movies that most often occur with other movie. For each movie, calculate the percentage of the other movie raters who also rated that movie. Order with the highest percentage first, and submit the top 5. Select "Star.Wars.IV...A.New.Hope" movie by defaut. Use the (x+y)/x method.
-
-Top Occurences:
-0.9333333, 'Toy Story'  
-0.8666667, 'Star Wars: Episode VI - Return of the Jedi'  
-0.8000000, 'The Silence of the Lambs'  
-0.7333333, 'Independence Day'  
-0.6666667, 'Total Recall'  
+Calculate movies that most often occur with other movie. For each movie, calculate the percentage of the other movie raters who also rated that movie. Order with the highest percentage first, and submit the top 5. 
 
 Funtion to create a dataframe with people who rated a movie.  
 __n__: default is 0. This is the rating value to filter on.
@@ -203,13 +172,6 @@ customPrint(swMostLiked, 6, "alsoWatched")
 
 # 5) People who liked Babe also liked ...
 Calculate the movies better rated of people who liked a movie. Select the people who liked the movie "Babe" (4 or 5 stars) and provide the top 5 movies they liked most.
-
-**Expected result**:
-5.000, 'Pulp.Fiction'  
-5.000, 'Groundhog.Day'  
-4.500, 'The.Shawshank.Redemption'  
-4.333, 'Toy.Story'  
-4.000, 'Blade.Runner'  
 
 
 ```{r}
