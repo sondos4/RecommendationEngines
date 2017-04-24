@@ -1,0 +1,327 @@
+# IE - Master in Business Analytics and Big Data
+Recommendation Systems
+
+Building a Non Personalized Recommendation Engine
+
+Author: Sondos Atwi 
+
+========================================================
+
+# Initialization
+
+Import libraries
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(reshape)
+```
+
+Load the critics dataset.
+
+```{r}
+critics = read.csv("../../Data/critics.csv", check.names=FALSE)
+#Transform data to long format to use dplyr
+mcritics = melt(critics, id=c("User"), variable_name= "movie", na.rm = TRUE)
+```
+
+
+# 1) Top 5 movies, by rating mean
+Calculate mean rating for each movie, ordered with the highest rating listed first, and plot the top 5.
+
+**Expected result**:
+3.600000, 'The Shawshank Redemption'  
+3.266667, 'Star Wars IV - A New Hope'  
+3.222222, 'Blade Runner'  
+3.166667, 'Groundhog Day'  
+3.062500, 'The Silence of the Lambs'  
+
+Function to get the top movies in a dataframe:  
+__df__: dataframe to be provided (should be the original movies df)  
+__n__: top n movies  
+__m__: 0 by default. Should be used in case a minimum number of ratings is required  
+```{r}
+topMovies = function(df = mcritics, n = 5, m = 0){
+  top = df %>%
+    group_by(movie) %>%
+    filter(n() >= m) %>%
+    summarise("meanRating" = mean(value)) %>%
+    arrange(desc(meanRating)) %>%
+    slice(1:n)
+  
+  top
+}
+```
+
+The below function will print the output in a special format
+```{r}
+customPrint = function(data, rd=0, col1, col2 = "movie"){
+  df=data.frame(paste(format(round(data[[col1]],rd), nsmall = rd), paste("\'", data[[col2]], "\'", sep = ""), sep = ", "))
+
+names(df) = NULL
+print(df, digits = NULL, quote = FALSE, right = FALSE, row.names = FALSE)
+}
+```
+
+
+```{r fig.width=7, fig.height=6}
+#find top 5 movies in the mcritics dataframe
+top5 = topMovies()
+```
+
+Print the top 5 movies and Plot
+```{r}
+customPrint(top5, 6, "meanRating")
+
+ggplot(data=top5, aes(movie, meanRating, fill = movie)) +
+  geom_bar(stat="identity", alpha = 0.8)
+```
+
+# 2) Top 5 movies, by rating distribution
+Calculate the percentage of ratings for each movie that are 4 stars or higher. Order with the highest percentage first, and plot the top 5 movies with more high ratings distribution.
+
+**Expected result**:
+0.7000000, 'The Shawshank Redemption'  
+0.5333333, 'Star Wars IV - A New Hope'  
+0.5000000, 'Gladiator'  
+0.4444444, 'Blade Runner'  
+0.4375000, 'The Silence of the Lambs'  
+
+Function to get the rating distribution by dividing the number of records having rating (value) >= 4  by the total number of ratings for each movie.  
+__df__: dataframe to be provided (should be the original movies df)  
+__n__: top n records  
+__m__: 0 by default. Should be used in case a minimum number of ratings is required  
+```{r}
+ratingDist = function(df = mcritics, n = 5, m = 0){
+  rd = df %>%
+    group_by(movie) %>%
+    filter(n() >= m) %>%
+    summarise(ratingDist = sum(value >=4)/n()) %>%
+    select(ratingDist, movie) %>%
+    arrange(desc(ratingDist)) %>%
+    slice(1:n)
+  rd
+}
+```
+
+
+```{r fig.width=7, fig.height=6}
+ratings =  ratingDist()
+
+customPrint(ratings, 6, "ratingDist")
+
+ggplot(data=ratings, aes(movie, ratingDist, fill = movie)) +
+  geom_bar(stat="identity", alpha = 0.8) 
+```
+
+# 3) Top 5 movies, by quantity of ratings
+Count the number of ratings for each movie, order the one with most number of ratings first, submit the top 5.
+
+**Expected result**:
+17, 'Toy Story'  
+16, 'The Silence of the Lambs'  
+15, 'Star Wars IV - A New Hope'  
+14, 'Star Wars VI - Return of the Jedi'  
+13, 'Independence Day'
+
+Function to count the number of ratings for each movie.  
+__df__: dataframe to be provided (should be the original movies df)   
+__n__: top n records  
+```{r}
+ratingsNb = function(df = mcritics, n = 5){
+  rNb = df %>%
+    group_by(movie) %>%
+    summarise(total = n()) %>%
+    arrange(desc(total)) %>%
+    slice(1:n)
+
+  rNb
+}
+```
+
+```{r fig.width=7, fig.height=6}
+#find the total number of ratings for each
+ratingsdf = ratingsNb()
+customPrint(ratingsdf, col1 = "total")
+```
+
+# 4) People who watched Star Wars IV also watched ...
+Calculate movies that most often occur with other movie. For each movie, calculate the percentage of the other movie raters who also rated that movie. Order with the highest percentage first, and submit the top 5. Select "Star.Wars.IV...A.New.Hope" movie by defaut. Use the (x+y)/x method.
+
+Top Occurences:
+0.9333333, 'Toy Story'  
+0.8666667, 'Star Wars: Episode VI - Return of the Jedi'  
+0.8000000, 'The Silence of the Lambs'  
+0.7333333, 'Independence Day'  
+0.6666667, 'Total Recall'  
+
+Funtion to create a dataframe with people who rated a movie.  
+__n__: default is 0. This is the rating value to filter on.
+```{r fig.width=7, fig.height=6}
+movieUsers = function(df = mcritics, mv, n = 0){
+  mvUsers =  df %>%
+  filter(movie == mv) %>%
+  filter(value >= n)
+
+  mvUsers
+}
+```
+
+Function to create dataframe with the other movies liked by the users who liked a movie _mv_.  
+__df1__: original movies dataframe  
+__df2__: dataframe with users who liked movie _mv_  
+```{r}
+uAlsoWatched = function(df1 = mcritics, df2, mv)
+{
+  liked = df1 %>%
+    filter(User %in% df2$User) %>%
+    filter(movie != mv) %>%
+    group_by(movie) 
+
+  liked
+}
+```
+
+```{r fig.width=7, fig.height=6}
+#dataframe with users who watched "Star Wars IV - A New Hope"
+SWUsers = movieUsers(mv = "Star Wars IV - A New Hope")
+#total number of users who wathed star wars
+totalStars = nrow(SWUsers)
+
+#The other movies watched by those who watched Star Wars 
+SWalsoWatched = uAlsoWatched(df2 = SWUsers, mv = "Star Wars IV - A New Hope")
+
+#For each movie other than Star Wars, divide the number of users who watched that movie by the total number of those who watched star wars 
+swMostLiked = SWalsoWatched %>%
+  summarise(alsoWatched = sum(User %in% SWUsers$User)/totalStars) %>%
+  arrange(desc(alsoWatched)) %>%
+  slice(1:5)
+
+customPrint(swMostLiked, 6, "alsoWatched")
+```
+
+
+# 5) People who liked Babe also liked ...
+Calculate the movies better rated of people who liked a movie. Select the people who liked the movie "Babe" (4 or 5 stars) and provide the top 5 movies they liked most.
+
+**Expected result**:
+5.000, 'Pulp.Fiction'  
+5.000, 'Groundhog.Day'  
+4.500, 'The.Shawshank.Redemption'  
+4.333, 'Toy.Story'  
+4.000, 'Blade.Runner'  
+
+
+```{r}
+#Users who liked the movie "Babe", with rating >= 4
+babesUsers = movieUsers(mcritics, "Babe", 4)
+
+#Other movies liked by the users who liked the movie "Babe"
+alsoLiked = uAlsoWatched(df2 = babesUsers, mv = "Babe")
+
+#Get the top 5 by calculating the mean rating value of the other movies
+alsoLiked = alsoLiked %>%
+  summarise(rate = mean(value)) %>%
+  arrange(desc(rate), movie) %>%
+  slice(1:5)
+
+customPrint(alsoLiked, 3, "rate")  
+```
+
+# 6) movieLens
+Explore a real data set and provide non-personalized ratings. You can use the movieLens database. You can find movieLens' dataset here: http://files.grouplens.org/datasets/movielens/ml-10m-README.html
+
+
+```{r}
+movies = read.csv("../../Data/ml-latest-small/movies.csv")
+ratings = read.csv("../../Data/ml-latest-small/ratings.csv")
+
+#Select only movieId and title columns
+movies = movies %>%
+  select(1:2) 
+
+#select only userId, movieId and rating
+ratings = ratings %>%
+  select(1:3)
+
+#Merge dataframes and rename columns 
+data = merge(movies, ratings, by = "movieId")
+data = rename(data, c("title" = "movie", "rating" = "value", "userId" = "User"))
+```
+
+####Explore dataset
+```{r}
+#Create a dataframe to calculate the total number of ratings for each movie
+movieRatingCount = data %>%
+  group_by(movie) %>%
+  summarise(total = n()) %>%
+  arrange(desc(total))
+
+#get the summary of the total column to see the movie rating count distribution
+summary(movieRatingCount$total)
+```
+
+####Get top 5 movies: 
+From the summary above, we can see that some movies have only 1 rating. These could be misleading when analyzing the most popular movies.   
+Therefore, we will only take into consideration the ones that have been rated by at least 10 users.  
+
+```{r}
+#Get the top 5 movies that have been rated by at least 10 users
+top5movies = topMovies(data, m = 10)
+customPrint(top5movies, 6, "meanRating")
+```
+
+####Top 5 movies by rating distribution
+Get the 10 movies that have the highest percentage of ratings >=4.   
+Here we will also filter on those movies that have at least 10 user ratings.  
+```{r}
+#Get the top 10 movies by rating distribution that have been rated by at least 10 users
+movieRatings = ratingDist(data, 10, 10)
+
+customPrint(movieRatings, 6, "ratingDist")
+```
+
+
+####Get the movies with the highest number of ratings  
+```{r}
+movieRatingNb = ratingsNb(data, 10)
+
+customPrint(movieRatingNb, col1="total", col2="movie")
+```
+
+####Those who watched Toy Story also watched..  
+```{r fig.width=7, fig.height=6}
+#Users who watched the Toy Story movie
+toyStoryUsers = movieUsers(data, "Toy Story (1995)")
+totalToyStory = nrow(toyStoryUsers)
+
+#Find what the users who watched toy Story also watched
+tsAlsoWatched = uAlsoWatched(data, toyStoryUsers,  "Toy Story (1995)")
+
+#For each movie other than Toy Story, divide the number of users who watched that movie by the total number of those who watched Toy Story.
+tsAlsoWatched =  tsAlsoWatched %>%
+  summarise(alsoWatched = sum(User %in% toyStoryUsers$User)/totalToyStory) %>%
+  arrange(desc(alsoWatched)) %>%
+  slice(1:5)
+
+customPrint(tsAlsoWatched, 6, "alsoWatched", "movie")
+```
+
+####Those who liked 'Little Big Man (1970)' also liked..
+```{r}
+#create the lbm dataframe with the users who rated 'Little Big Man (1970)" with a 4 or above
+lbmUsers = movieUsers(data, "Little Big Man (1970)")
+
+#Find what the users who watched Little Big Man (1970) also watched
+lbmAlsoWatched = uAlsoWatched(data, lbmUsers, "Little Big Man (1970)")
+
+#Get the top 5 liked movies by Little Black Man users
+mostLikedlbm = lbmAlsoWatched %>%
+                  summarise(rate = mean(value)) %>%
+                  arrange(desc(rate), desc(movie)) %>%
+                  slice(1:5)
+  
+customPrint(mostLikedlbm, 3, "rate", "movie")  
+```
+
+
